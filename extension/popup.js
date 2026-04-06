@@ -7,11 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const label = document.getElementById('label');
   const probability = document.getElementById('probability');
   const flagsContainer = document.getElementById('flagsContainer');
+  const linkedinTip = document.getElementById('linkedinTip');
 
   checkBtn.addEventListener('click', () => {
     loading.style.display = 'block';
     result.style.display = 'none';
     error.style.display = 'none';
+    linkedinTip.style.display = 'none';
 
     chrome.storage.local.get('jobData', (data) => {
       if (!data.jobData) {
@@ -51,6 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
           label.style.color = fillColor;
 
           probability.textContent = 'Confidence: ' + pct + '%';
+
+          if (jobData.platform === 'linkedin') {
+            linkedinTip.style.display = 'block';
+          }
 
           flagsContainer.innerHTML = '';
           if (response.flags && response.flags.length > 0) {
