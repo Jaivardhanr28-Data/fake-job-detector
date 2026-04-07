@@ -49,9 +49,12 @@
       ],
       company: [
         '.jd-header-comp-name',
+        '.comp-name',
+        'a.comp-name',
+        '[class*="comp-name"]',
         '.company-name',
-        'a.jd-header-comp-name',
-        '[class*="company"]'
+        '[class*="company-name"]',
+        'a[href*="/company/"]'
       ],
       description: [
         '.job-desc',
@@ -268,6 +271,19 @@
     // Only fall back to DOM selectors if title still empty
     if (!title) title = extractBySelectors(selectors.title);
     if (!company) company = extractBySelectors(selectors.company);
+
+    if (platform === 'naukri' && company) {
+      company = company.replace(/^about\s+(the\s+)?company\s*/i, '').trim();
+      company = company.split('\n')[0].trim();
+    }
+    // If company still empty on Naukri, parse from page title
+    // Naukri title format: "Job Title - Location - Company | Naukri.com"
+    if (platform === 'naukri' && (!company || company.length < 2)) {
+      const parts = document.title.split('-');
+      if (parts.length >= 3) {
+        company = parts[parts.length - 1].replace(/\|.*$/, '').trim();
+      }
+    }
 
     let description = extractBySelectors(selectors.description);
 
